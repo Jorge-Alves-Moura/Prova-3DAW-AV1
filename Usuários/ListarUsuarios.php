@@ -38,7 +38,7 @@ $arqAlunos = fopen("Usuarios.txt", "r") or die("Erro ao abrir arquivo");
                 <td><?php echo $nome; ?></td>
                 <td><?php echo $email; ?></td>
                 <td>
-                    <a href="Alterar.Usuario.php?matricula=<?php echo $matricula; ?>">
+                    <a href="AlterarUsuario.php?matricula=<?php echo $matricula; ?>">
                         <button>Alterar</button>
                     </a>
                     <a href="ExcluirUsuario.php?matricula=<?php echo $matricula; ?>">
