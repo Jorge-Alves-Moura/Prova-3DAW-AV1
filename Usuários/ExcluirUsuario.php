@@ -1,8 +1,8 @@
 <?php
 
 $msg = "";
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $matricula = $_POST["matricula"];
+if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+    $matricula = $_GET["matricula"];
 
     $arqUsuarios = fopen("Usuarios.txt", "r") or die("Erro ao abrir arquivo!");
     $arqNovo = fopen("Usuarios_novo.txt", "w") or die("Erro ao criar!");
