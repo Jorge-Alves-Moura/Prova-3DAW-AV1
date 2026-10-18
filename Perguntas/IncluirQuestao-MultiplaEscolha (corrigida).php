@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $arqPergunta = fopen("Perguntas Multipla.txt", "w") or die("Erro ao criar o arquivo");
         $arqResposta = fopen("Respostas Multipla.txt", "w") or die("Erro ao criar o arquivo");
 
-        $linhaPergunta = "id;pergunta\n";
+        $linhaPergunta = "id;pergunta;tipo\n";
         $linhaResposta = "idPergunta;idResposta;resposta;gabarito\n";
 
         fwrite($arqPergunta, $linhaPergunta);
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $arqPergunta = fopen("Perguntas Multipla.txt", "a") or die("Erro ao incluir pergunta!");
         $arqResposta = fopen("Respostas Multipla.txt", "a") or die("Erro ao incluir resposta!");
 
-        $linhaPergunta = $idPergunta . ";" . $pergunta . "\n";
+        $linhaPergunta = $idPergunta . ";" . $pergunta . $tipo . "\n";
 
         fwrite($arqPergunta, $linhaPergunta);
         $idResposta = 1;
