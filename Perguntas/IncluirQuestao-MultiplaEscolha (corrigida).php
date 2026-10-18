@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $arqPergunta = fopen("Perguntas Multipla.txt", "a") or die("Erro ao incluir pergunta!");
         $arqResposta = fopen("Respostas Multipla.txt", "a") or die("Erro ao incluir resposta!");
 
-        $linhaPergunta = $idPergunta . ";" . $pergunta . $tipo . "\n";
+        $linhaPergunta = $idPergunta . ";" . $pergunta . ";" . $tipo . "\n";
 
         fwrite($arqPergunta, $linhaPergunta);
         $idResposta = 1;
