@@ -1,6 +1,6 @@
 <?php
 $idPergunta = $_GET["idPergunta"];
-$arqPergunta = fopen("Perguntas.txt", "r") or die("Erro ao abrir arquivo");
+$arqPergunta = fopen("Perguntas Discursivas.txt", "r") or die("Erro ao abrir arquivo");
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -11,7 +11,7 @@ $arqPergunta = fopen("Perguntas.txt", "r") or die("Erro ao abrir arquivo");
 </head>
 
 <body>
-    <h1>Questão</h1>
+    <h1>Questão Discursiva</h1>
     <table border="1">
         <tr>
             <th>ID</th>
@@ -29,7 +29,7 @@ $arqPergunta = fopen("Perguntas.txt", "r") or die("Erro ao abrir arquivo");
                 continue;
             }
             if (trim($dados[0]) == $idPergunta) {
-                $id = $dados[0];
+                $id = trim($dados[0]);
                 $pergunta = trim($dados[1]);
         ?>
                 <tr>
@@ -37,9 +37,12 @@ $arqPergunta = fopen("Perguntas.txt", "r") or die("Erro ao abrir arquivo");
                     <td><?php echo $pergunta; ?></td>
                     <td>
                         <?php
-                        $arqResposta = fopen("Respostas.txt", "r") or die("Erro ao abrir arquivo");
+                        $arqResposta = fopen("Respostas Discursivas.txt", "r")
+                            or die("Erro ao abrir arquivo");
+
                         while (!feof($arqResposta)) {
                             $linhaResposta = fgets($arqResposta);
+
                             if ($linhaResposta == false) {
                                 break;
                             }
