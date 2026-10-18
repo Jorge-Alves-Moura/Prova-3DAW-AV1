@@ -1,70 +1,58 @@
 <?php
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    $idPergunta = $_POST["idPergunta"];
     $pergunta = $_POST["pergunta"];
-    $tipo = $_POST["tipo"];
-    $quantidade = $_POST["quantidade"];
+    $resposta = $_POST["resposta"];
 
-    if (!file_exists("Perguntas Multipla.txt")) {
-        $arqPergunta = fopen("Perguntas Multipla.txt", "w") or die("Erro ao criar o arquivo");
-        $arqResposta = fopen("Respostas Multipla.txt", "w") or die("Erro ao criar o arquivo");
+    $arqPergunta = fopen("Perguntas Discursivas.txt", "r") or die("Erro ao abrir o arquivo");
 
-        $linhaPergunta = "id;pergunta;tipo\n";
-        $linhaResposta = "idPergunta;idResposta;resposta;gabarito\n";
-
-        fwrite($arqPergunta, $linhaPergunta);
-        fwrite($arqResposta, $linhaResposta);
-
-        fclose($arqPergunta);
-        fclose($arqResposta);
-    }
-    $arqPergunta = fopen("Perguntas Multipla.txt", "r") or die("Erro ao abrir o arquivo");
-
-    $idPergunta = 0;
+    $arqNovo = fopen("Perguntas Discursivas Novo.txt", "w") or die("Erro ao criar o arquivo");
 
     while (!feof($arqPergunta)) {
         $linha = fgets($arqPergunta);
-
         if ($linha != "") {
             $dados = explode(";", $linha);
-            if(is_numeric($dados[0])){
-                $idPergunta = $dados[0];
+            if ($dados[0] == "id") {
+                fwrite($arqNovo, $linha);
+            } else if (trim($dados[0]) == $idPergunta) {
+                $linhaPergunta = $idPergunta . ";" . $pergunta . "\n";
+                fwrite($arqNovo, $linhaPergunta);
+            } else {
+                fwrite($arqNovo, $linha);
             }
         }
     }
-
-    $idPergunta = $idPergunta + 1;
-
     fclose($arqPergunta);
+    fclose($arqNovo);
 
-    if (isset($_POST["resposta"])) {
-        $respostas = $_POST["resposta"];
-        $gabaritos = $_POST["gabarito"];
+    unlink("Perguntas Discursivas.txt");
+    rename("Perguntas Discursivas Novo.txt", "Perguntas Discursivas.txt");
 
-        $arqPergunta = fopen("Perguntas Multipla.txt", "a") or die("Erro ao incluir pergunta!");
-        $arqResposta = fopen("Respostas Multipla.txt", "a") or die("Erro ao incluir resposta!");
+    $arqResposta = fopen("Respostas Discursivas.txt", "r") or die("Erro ao abrir o arquivo");
 
-        $linhaPergunta = $idPergunta . ";" . $pergunta . ";" . $tipo . "\n";
+    $arqNovo = fopen("Respostas Discursivas Novo.txt", "w") or die("Erro ao criar o arquivo");
 
-        fwrite($arqPergunta, $linhaPergunta);
-        $idResposta = 1;
-
-        while ($idResposta <= $quantidade) {
-            $resposta = $respostas[$idResposta - 1];
-            $gabarito = $gabaritos[$idResposta - 1];
-
-            $linhaResposta = $idPergunta . ";" . $idResposta . ";" . $resposta . ";" . $gabarito . "\n";
-
-            fwrite($arqResposta, $linhaResposta);
-
-            $idResposta = $idResposta + 1;
+    while (!feof($arqResposta)) {
+        $linha = fgets($arqResposta);
+        if ($linha != "") {
+            $dados = explode(";", $linha);
+            if ($dados[0] == "idPergunta") {
+                fwrite($arqNovo, $linha);
+            } else if (trim($dados[0]) == $idPergunta) {
+                $linhaResposta = $idPergunta . ";" . $resposta . "\n";
+                fwrite($arqNovo, $linhaResposta);
+            } else {
+                fwrite($arqNovo, $linha);
+            }
         }
-
-        fclose($arqPergunta);
-        fclose($arqResposta);
-
-        echo "Pergunta cadastrada com sucesso!";
     }
+    fclose($arqResposta);
+    fclose($arqNovo);
+
+    unlink("Respostas Discursivas.txt");
+    rename("Respostas Discursivas Novo.txt", "Respostas Discursivas.txt");
 }
 
 ?>
@@ -75,42 +63,59 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Incluir Pergunta</title>
+    <title>Alterar Pergunta</title>
 </head>
 
 <body>
-
-    <form action="IncluirQuestao-MultiplaEscolha.php" method="post">
-        <input type="text" name="pergunta">
-        <input type="text" name="tipo">
-        <input type="number" name="quantidade" min="2">
-        <input type="submit">
-
+    <form action="AlterarQuestao-Discursiva.php" method="get">
+        <input type="number" name="idPergunta" placeholder="ID da pergunta" required>
+        <input type="submit" value="Buscar">
     </form>
 
     <?php
+    if (isset($_GET["idPergunta"]) && !isset($_POST["resposta"])) {
+        $idPergunta = $_GET["idPergunta"];
+        $perguntaEncontrada = false;
+        $arqPergunta = fopen("Perguntas Discursivas.txt", "r") or die("Erro ao abrir o arquivo");
 
-    if (isset($_POST["quantidade"]) && !isset($_POST["resposta"])) {
-        $quantidade = $_POST["quantidade"];
-
-        echo "<form action='IncluirQuestao-MultiplaEscolha.php' method='post'>";
-
-        echo "<input type='hidden' name='pergunta' value='" . $pergunta . "'>";
-        echo <input type="hidden" name="tipo">;
-        echo "<input type='hidden' name='quantidade' value='" . $quantidade . "'>";
-
-        $idResposta = 1;
-
-        while ($idResposta <= $quantidade) {
-            echo "<input type='text' name='resposta[]'>";
-            echo "<input type='text' name='gabarito[]'>";
-            $idResposta = $idResposta + 1;
+        while (!feof($arqPergunta)) {
+            $linha = fgets($arqPergunta);
+            if ($linha != "") {
+                $dados = explode(";", $linha);
+                if (isset($dados[1]) && trim($dados[0]) == $idPergunta) {
+                    $pergunta = trim($dados[1]);
+                    $perguntaEncontrada = true;
+                }
+            }
         }
+        fclose($arqPergunta);
 
-        echo "<input type='submit'>";
-        echo "</form>";
+        if ($perguntaEncontrada) {
+            $resposta = "";
+            $arqResposta = fopen("Respostas Discursivas.txt", "r") or die("Erro ao abrir o arquivo");
+
+            while (!feof($arqResposta)) {
+                $linha = fgets($arqResposta);
+                if ($linha != "") {
+                    $dados = explode(";", $linha);
+                    if (isset($dados[1]) && trim($dados[0]) == $idPergunta) {
+                        $resposta = trim($dados[1]);
+                    }
+                }
+            }
+
+            fclose($arqResposta);
+            echo "<form action='AlterarQuestao-Discursiva.php' method='post'>";
+            echo "<input type='hidden' name='idPergunta' value='$idPergunta'>";
+            echo "<input type='text' name='pergunta' value='$pergunta'>";
+            echo "<input type='text' name='resposta' value='$resposta'>";
+            echo "<input type='submit'>";
+            echo "</form>";
+        }
     }
+
     ?>
+
 </body>
 
 </html>
