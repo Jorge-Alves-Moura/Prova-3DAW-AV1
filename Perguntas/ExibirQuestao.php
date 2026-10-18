@@ -1,17 +1,24 @@
 <?php
 $idPergunta = $_GET["idPergunta"];
-$arqPergunta = fopen("Perguntas Discursivas.txt", "r") or die("Erro ao abrir arquivo");
+$tipo = $_GET["tipo"];
+if ($tipo == "discursiva") {
+    $nomeArqPergunta = "Perguntas Discursivas.txt";
+    $nomeArqResposta = "Respostas Discursivas.txt";
+} else {
+    $nomeArqPergunta = "Perguntas Multipla.txt";
+    $nomeArqResposta = "Respostas Multipla.txt";
+}
+$arqPergunta = fopen($nomeArqPergunta, "r")
+    or die("Erro ao abrir arquivo");
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <title>Questão</title>
 </head>
-
 <body>
-    <h1>Questão Discursiva</h1>
+    <h1>Questão</h1>
     <table border="1">
         <tr>
             <th>ID</th>
@@ -21,10 +28,12 @@ $arqPergunta = fopen("Perguntas Discursivas.txt", "r") or die("Erro ao abrir arq
         <?php
         while (!feof($arqPergunta)) {
             $linha = fgets($arqPergunta);
+
             if ($linha == false) {
                 break;
             }
             $dados = explode(";", $linha);
+
             if ($dados[0] == "id") {
                 continue;
             }
@@ -37,9 +46,8 @@ $arqPergunta = fopen("Perguntas Discursivas.txt", "r") or die("Erro ao abrir arq
                     <td><?php echo $pergunta; ?></td>
                     <td>
                         <?php
-                        $arqResposta = fopen("Respostas Discursivas.txt", "r")
+                        $arqResposta = fopen($nomeArqResposta, "r")
                             or die("Erro ao abrir arquivo");
-
                         while (!feof($arqResposta)) {
                             $linhaResposta = fgets($arqResposta);
 
@@ -47,11 +55,21 @@ $arqPergunta = fopen("Perguntas Discursivas.txt", "r") or die("Erro ao abrir arq
                                 break;
                             }
                             $dadosResposta = explode(";", $linhaResposta);
+
                             if ($dadosResposta[0] == "idPergunta") {
                                 continue;
                             }
                             if (trim($dadosResposta[0]) == $idPergunta) {
-                                echo trim($dadosResposta[1]);
+                                if ($tipo == "discursiva") {
+                                    echo trim($dadosResposta[1]);
+                                } else {
+                                    echo trim($dadosResposta[2]);
+
+                                    if (trim($dadosResposta[3]) == "1") {
+                                        echo " (Gabarito)";
+                                    }
+                                    echo "<br>";
+                                }
                             }
                         }
                         fclose($arqResposta);
