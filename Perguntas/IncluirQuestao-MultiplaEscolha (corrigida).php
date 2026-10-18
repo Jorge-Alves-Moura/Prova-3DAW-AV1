@@ -2,6 +2,7 @@
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $pergunta = $_POST["pergunta"];
+    $tipo = $_POST["tipo"];
     $quantidade = $_POST["quantidade"];
 
     if (!file_exists("Perguntas Multipla.txt")) {
@@ -81,6 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <form action="IncluirQuestao-MultiplaEscolha.php" method="post">
         <input type="text" name="pergunta">
+        <input type="text" name="tipo">
         <input type="number" name="quantidade" min="2">
         <input type="submit">
 
@@ -94,6 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "<form action='IncluirQuestao-MultiplaEscolha.php' method='post'>";
 
         echo "<input type='hidden' name='pergunta' value='" . $pergunta . "'>";
+        echo <input type="hidden" name="tipo">;
         echo "<input type='hidden' name='quantidade' value='" . $quantidade . "'>";
 
         $idResposta = 1;
