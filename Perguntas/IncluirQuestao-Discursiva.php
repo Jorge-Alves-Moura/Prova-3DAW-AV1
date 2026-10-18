@@ -1,6 +1,7 @@
 <?php
     if($_SERVER['REQUEST_METHOD'] == 'POST'){
         $pergunta = $_POST["pergunta"];
+        $tipo = $_POST["tipo"]
         $resposta = $_POST["resposta"];
 
         if(!file_exists("Perguntas Discursivas.txt")){
@@ -31,7 +32,7 @@
         $arqPergunta = fopen("Perguntas Discursivas.txt", "a") or die("Erro ao incluir pergunta");
         $arqResposta = fopen("Respostas Discursivas.txt", "a") or die("Erro ao incluir resposta");
 
-        $linhaPergunta = $idPergunta . ";" . $pergunta . "\n";
+        $linhaPergunta = $idPergunta . ";" . $pergunta . ";" . $tipo . "\n";
         $linhaResposta = $idPergunta . ";" . $resposta . "\n";
         fwrite($arqPergunta, $linhaPergunta);
         fwrite($arqResposta, $linhaResposta);
@@ -50,6 +51,7 @@
 <body>
     <form action="IncluirQuestao-Discursiva.php" method="post">
         <input type="text" name="pergunta"><br>
+        <input type="text" name="tipo"><br>
         <input type="text" name="resposta"><br>
         <input type="submit">
     </form>
